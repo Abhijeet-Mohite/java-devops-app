@@ -5,11 +5,24 @@ pipeline {
         DOCKER_IMAGE = "abhijeet12345678/devops-app"
     }
 
+    options {
+        // This will wipe out the workspace at the start of the build
+        wipeWorkspace()
+        // Keep build logs for 10 builds
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
     stages {
+        stage('Clean Workspace') {
+            steps {
+                echo 'Cleaning workspace...'
+                deleteDir() // deletes all files in current workspace
+            }
+        }
 
         stage('Clone') {
             steps {
-                git 'https://github.com/Abhijeet-Mohite/java-devops-app.git'
+                git branch: 'main', url: 'https://github.com/Abhijeet-Mohite/java-devops-app.git'
             }
         }
 
@@ -30,6 +43,15 @@ pipeline {
             steps {
                 sh 'docker push $DOCKER_IMAGE'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check console output.'
         }
     }
 }
