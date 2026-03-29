@@ -6,17 +6,17 @@ pipeline {
     }
 
     options {
-        // This will wipe out the workspace at the start of the build
-        wipeWorkspace()
         // Keep build logs for 10 builds
         buildDiscarder(logRotator(numToKeepStr: '10'))
+        // Optional: timestamps in console
+        timestamps()
     }
 
     stages {
         stage('Clean Workspace') {
             steps {
                 echo 'Cleaning workspace...'
-                deleteDir() // deletes all files in current workspace
+                deleteDir() // deletes everything in current workspace
             }
         }
 
