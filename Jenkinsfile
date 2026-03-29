@@ -1,22 +1,34 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = "abhijeet12345678/devops-app"
+    }
+
     stages {
-        stage('Build') {
+
+        stage('Clone') {
             steps {
-                echo 'Building the project...'
+                git 'https://github.com/Abhijeet-Mohite/java-devops-app.git'
             }
         }
 
-        stage('Test') {
+        stage('Build JAR') {
             steps {
-                echo 'Testing...'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean package'
             }
         }
 
-        stage('Deploy') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Deploying...'
+                sh 'docker build -t $DOCKER_IMAGE .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $DOCKER_IMAGE'
             }
         }
     }
